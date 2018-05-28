@@ -12,7 +12,7 @@ class Config
     @config = defaults.merge("name" => uuid).merge(options)
   end
 
-  def init(*args)
+  def init(*_args)
     write
 
     Cluster.new(path)

@@ -2,7 +2,7 @@ require "tmpdir"
 
 Dir[File.expand_path("support/**/*.rb", __dir__)].each { |f| require f }
 
-RSpec.configure do |config|
+RSpec.configure do |config| # rubocop:disable Metrics/BlockLength
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

@@ -8,12 +8,12 @@ module Bazel
 
     def untar(dir)
       stdout, stderr, status = Open3.capture3("tar -zxf #{@path} -C #{dir}")
-      unless status.success?
-        STDOUT.puts(stdout)
-        STDERR.puts(stderr)
+      return if status.success?
 
-        exit(1)
-      end
+      STDOUT.puts(stdout)
+      STDERR.puts(stderr)
+
+      exit(1)
     end
   end
 
@@ -22,17 +22,21 @@ module Bazel
   def build(target)
     case target
     when :tarball
-      stdout, stderr, status = Open3.capture3("bazel build #{target}")
-      unless status.success?
-        STDOUT.puts(stdout)
-        STDERR.puts(stderr)
-
-        exit(1)
-      end
-
-      Tarball.new("bazel-bin/tectonic-dev.tar.gz")
+      build_tarball
     else
       raise "target not supported"
     end
+  end
+
+  def build_tarball
+    stdout, stderr, status = Open3.capture3("bazel build #{target}")
+    unless status.success?
+      STDOUT.puts(stdout)
+      STDERR.puts(stderr)
+
+      exit(1)
+    end
+
+    Tarball.new("bazel-bin/tectonic-dev.tar.gz")
   end
 end

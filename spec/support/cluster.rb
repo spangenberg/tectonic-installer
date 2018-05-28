@@ -20,23 +20,28 @@ class Cluster
   def install(*args)
     run_cluster_command(:install, *args)
 
-    if block_given?
-      begin
-        yield
-      ensure
-        destroy
-      end
+    return unless block_given?
+
+    begin
+      yield
+    ensure
+      destroy
     end
   end
 
   private
 
   def run(*args)
-    cmd = "#{File.join("installer", "tectonic")} #{args.join(" ")}"
+    cmd = [File.join("installer", "tectonic"), *args].join(" ")
     puts cmd.inspect if ENV.key?("DEBUG")
     Open3.popen2e(cmd) do |_, stdout_stderr, wait_thr|
-      Thread.new { stdout_stderr.each {|line| puts line } } if ENV.key?("DEBUG")
-      raise Error, "#{stdout_stderr}" unless exit_status = wait_thr.value.success?
+      if ENV.key?("DEBUG")
+        Thread.new do
+          stdout_stderr.each { |line| puts line }
+        end
+      end
+
+      raise Error, stdout_stderr unless wait_thr.value.success?
     end
   end
 
