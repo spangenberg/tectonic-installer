@@ -176,8 +176,7 @@ pipeline {
 
                   withDockerContainer(tectonicSmokeTestEnvImage) {
                     sh"""#!/bin/bash -ex
-                      cd tests/rspec
-                      rubocop --cache false spec lib
+                      rubocop --cache false spec
                     """
                   }
                 }
@@ -266,7 +265,7 @@ pipeline {
               try {
                 sh """#!/bin/bash -xe
                 export BUILD_RESULT=${currentBuild.currentResult}
-                ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh jenkins-logs
+                ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh -d jenkins-logs
                 """
               } catch (Exception e) {
                 notifyBuildSlack()
@@ -331,7 +330,6 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
                 unstashCleanRepoTectonicTarGZSmokeTests()
                 sh """#!/bin/bash -ex
                   mkdir -p templogfiles && chmod 777 templogfiles
-                  cd tests/rspec
 
                   # Directing test output both to stdout as well as a log file
                   rspec ${testFilePath} --format RspecTap::Formatter --format RspecTap::Formatter --out ../../templogfiles/tap.log
@@ -352,7 +350,7 @@ def runRSpecTest(testFilePath, dockerArgs, credentials) {
           script {
             try {
               sh """#!/bin/bash -xe
-              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh smoke-test-logs ${testFilePath}
+              ./tests/jenkins-jobs/scripts/log-analyzer-copy.sh -d smoke-test-logs ${testFilePath}
               """
             } catch (Exception e) {
               notifyBuildSlack()
