@@ -52,7 +52,7 @@
     "babel-preset-react": "6.5.x",
     "babelify": "7.3.x",
     "browserify": "13.0.x",
-    "chromedriver": "2.x",
+    "chromedriver": "119.x",
     "deep-diff": "0.3.x",
     "eslint": "4.x",
     "eslint-plugin-import": "2.x",
